@@ -6,13 +6,13 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.0": {
-      "ConsoleApp1/1.0.0": {
+      "MCSTDiscord/1.0.0": {
         "dependencies": {
           "Discord.Net": "1.0.2",
           "Google.Apis.Sheets.v4": "1.36.1.1399"
         },
         "runtime": {
-          "ConsoleApp1.dll": {}
+          "MCSTDiscord.dll": {}
         }
       },
       "Discord.Net/1.0.2": {
@@ -1155,7 +1155,7 @@
     }
   },
   "libraries": {
-    "ConsoleApp1/1.0.0": {
+    "MCSTDiscord/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

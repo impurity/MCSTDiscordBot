@@ -10,3 +10,15 @@ C:\Users\Impurity\Desktop\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\Consol
 C:\Users\Impurity\Desktop\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.AssemblyInfo.cs
 C:\Users\Impurity\Desktop\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.dll
 C:\Users\Impurity\Desktop\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.pdb
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\credentials.json
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.deps.json
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.runtimeconfig.json
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.runtimeconfig.dev.json
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.dll
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\ConsoleApp1.pdb
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.csprojAssemblyReference.cache
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.csproj.CoreCompileInputs.cache
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.AssemblyInfoInputs.cache
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.AssemblyInfo.cs
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.dll
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.pdb

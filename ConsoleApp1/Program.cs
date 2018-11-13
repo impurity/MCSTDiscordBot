@@ -17,6 +17,11 @@ using System.Collections.Generic;
 
 namespace MyBot
 {
+
+    public enum RANGENAME
+    {
+
+    };
     public class Program
     {
         // CommandService and Service Collection for use with commands
@@ -76,6 +81,7 @@ namespace MyBot
             await _client.StartAsync();
             await Task.Delay(-1);
         }
+
         private static SheetsService AuthorizeGoogle()
         {
             using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
@@ -126,6 +132,7 @@ namespace MyBot
         public static string ApplicationName = "DevArea Client";
         public static SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum valueinputoption;
         public static SpreadsheetsResource.ValuesResource.AppendRequest.InsertDataOptionEnum insertdataoption;
+
 
         private static int GetRowByDiscord(string discordhandle)
         {
@@ -254,95 +261,12 @@ namespace MyBot
         [Command("info"), Summary("Get information about a specific player or mention")]
         public async Task Info(string data)
         {
+            if (data == "me")
+            {
+                var t = GetInfoFromColumns(data, Program.context.User.ToString());
+                await ReplyAsync("");
+            }
             //Do some parsing to see if data == Character name or an @Mention. Should be able to look up either. Then do an embed of all their information from the spreadsheet, see above.
         }
     }
 }
-
-
-
-/*
-
-        private static void AppendData(IList<IList<object>> data)
-        {
-            
-        }
-        private static void SetRole(int row, string data)
-        {
-            range = "C" + row;
-            Console.WriteLine(range);
-            requestbody = new Data.ValueRange();
-            requestbody.MajorDimension = "ROWS";
-            var info = new List<object>() { data };
-            requestbody.Values = new List<IList<object>> { info };
-            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, spreadsheetId, range);
-            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-            UpdateValuesResponse result2 = update.Execute();
-            Console.WriteLine("Done");
-        }
-
-        private static void SetClass(int row, string data)
-        {
-            range = "D" + row;
-            Console.WriteLine(range);
-            requestbody = new Data.ValueRange();
-            requestbody.MajorDimension = "ROWS";
-            var info = new List<object>() { data };
-            requestbody.Values = new List<IList<object>> { info };
-            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, spreadsheetId, range);
-            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-            UpdateValuesResponse result2 = update.Execute();
-            Console.WriteLine("Done");
-        }
-
-        private static void SetSpec(int row, string data)
-        {
-            range = "E" + row;
-            Console.WriteLine(range);
-            requestbody = new Data.ValueRange();
-            requestbody.MajorDimension = "ROWS";
-            var info = new List<object>() { data };
-            requestbody.Values = new List<IList<object>> { info };
-            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, spreadsheetId, range);
-            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-            UpdateValuesResponse result2 = update.Execute();
-            Console.WriteLine("Done");
-        }
-
-        private static void SetiLevel(int row, string data)
-        {
-            range = "F" + row;
-            Console.WriteLine(range);
-            requestbody = new Data.ValueRange();
-            requestbody.MajorDimension = "ROWS";
-            var info = new List<object>() { data };
-            requestbody.Values = new List<IList<object>> { info };
-            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, spreadsheetId, range);
-            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-            UpdateValuesResponse result2 = update.Execute();
-            Console.WriteLine("Done");
-        }
-
-        private static int GetRow(string discordhandle)
-        {
-            range = "B2:B";
-            SpreadsheetsResource.ValuesResource.GetRequest get = service.Spreadsheets.Values.Get(spreadsheetId, range);
-            ValueRange response = get.Execute();
-            IList<IList<object>> values = response.Values;
-            int rownum = 2;
-            foreach (var row in values)
-            {
-               foreach(var cell in row)
-                {
-                    if ((string)cell == discordhandle)
-                    {
-                        return rownum;
-                    }
-                    else
-                    {
-                        rownum++;
-                    }
-                }
-            }
-            return rownum;
-        }*/

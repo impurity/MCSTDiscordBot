@@ -1,0 +1,12 @@
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\credentials.json
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\MCSTDiscord.deps.json
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\MCSTDiscord.runtimeconfig.json
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\MCSTDiscord.runtimeconfig.dev.json
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\MCSTDiscord.dll
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\bin\Debug\netcoreapp2.0\MCSTDiscord.pdb
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\MCSTDiscord.csprojAssemblyReference.cache
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\MCSTDiscord.csproj.CoreCompileInputs.cache
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\MCSTDiscord.AssemblyInfoInputs.cache
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\MCSTDiscord.AssemblyInfo.cs
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\MCSTDiscord.dll
+D:\InDev\DiscBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\MCSTDiscord.pdb
