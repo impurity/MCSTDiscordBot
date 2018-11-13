@@ -191,79 +191,72 @@ namespace MyBot
             r.InsertDataOption = insertdataoption;
             r.AccessToken = credential.Token.AccessToken;
             Data.AppendValuesResponse response = await r.ExecuteAsync();
-            await ReplyAsync("Successfully added " + Program.context.User.ToString() + ".");
+            await ReplyAsync("Successfully added!");
         }
         [Command("role"), Summary("Set raid role.")]
-        public async Task Role(string type, string data)
+        public async Task Role(string data)
         {
-            switch (type)
-            {
-                case "set":
-                    range = "C" + GetRowByDiscord(Program.context.User.ToString());
-                    requestbody = new Data.ValueRange();
-                    requestbody.MajorDimension = "ROWS";
-                    var info = new List<object>() { data };
-                    requestbody.Values = new List<IList<object>> { info };
-                    SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, sheetid, range);
-                    update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-                    UpdateValuesResponse result2 = update.Execute();
-                    await ReplyAsync("Set your role to " + data + ".");
-                    break;
-                case "get":
-                    if (GetRowByName(data) == 0) { await ReplyAsync("No data found!"); break; }
-                    range = "C" + GetRowByName(data);
-                    SpreadsheetsResource.ValuesResource.GetRequest get = service.Spreadsheets.Values.Get(sheetid, range);
-                    ValueRange response = get.Execute();
-                    IList<IList<object>> values = response.Values;
-                    if (values != null && values.Count > 0)
-                    {
-                        foreach (var row in values)
-                        {
-                            await ReplyAsync(data + "'s raid role is set to: **" + row[0].ToString()+ "**");
-                            break;
-                        }
-                    }
-                    else { await ReplyAsync("No data found!"); break; }
-                    break;
-            }
+            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No data found..."); return;}
+            range = "C" + GetRowByDiscord(Program.context.User.ToString());
+            requestbody = new Data.ValueRange();
+            requestbody.MajorDimension = "ROWS";
+            var info = new List<object>() { data };
+            requestbody.Values = new List<IList<object>> { info };
+            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, sheetid, range);
+            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+            UpdateValuesResponse result2 = update.Execute();
+            await ReplyAsync("Set your role to **" + data + "**.");
         }
         [Command("class"), Summary("Set your ingame class")]
-        public async Task Class(string type, string data)
+        public async Task Class(string data)
         {
-            switch(type)
-            {
-                case "set":
-                    range = "D" + GetRowByDiscord(Program.context.User.ToString());
-                    Console.WriteLine(range);
-                    requestbody = new Data.ValueRange();
-                    requestbody.MajorDimension = "ROWS";
-                    var info = new List<object>() { data };
-                    requestbody.Values = new List<IList<object>> { info };
-                    SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, sheetid, range);
-                    update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-                    UpdateValuesResponse result2 = update.Execute();
-                    await ReplyAsync("Set your class to **" + data + "**.");
-                    break;
-                case "get":
-                    if (GetRowByName(data) == 0) { await ReplyAsync("No data found!"); break; }
-                    range = "D" + GetRowByName(data);
-                    SpreadsheetsResource.ValuesResource.GetRequest get = service.Spreadsheets.Values.Get(sheetid, range);
-                    ValueRange response = get.Execute();
-                    IList<IList<object>> values = response.Values;
-                    if (values != null && values.Count > 0)
-                    {
-                        foreach (var row in values)
-                        {
-                            await ReplyAsync(data + " is a **" + row[0].ToString() + "**");
-                            break;
-                        }
-                    }
-                    else { await ReplyAsync("No data found!"); break; }
-                    break;
-            }
+            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No data found..."); return; }
+            range = "D" + GetRowByDiscord(Program.context.User.ToString());
+            requestbody = new Data.ValueRange();
+            requestbody.MajorDimension = "ROWS";
+            var info = new List<object>() { data };
+            requestbody.Values = new List<IList<object>> { info };
+            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, sheetid, range);
+            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+            UpdateValuesResponse result2 = update.Execute();
+            await ReplyAsync("Set your class to **" + data + "**.");
+
+        }
+        [Command("spec"), Summary("Set your main spec")]
+        public async Task Spec(string data)
+        {
+            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No data found..."); return; }
+            range = "E" + GetRowByDiscord(Program.context.User.ToString());
+            requestbody = new Data.ValueRange();
+            requestbody.MajorDimension = "ROWS";
+            var info = new List<object>() { data };
+            requestbody.Values = new List<IList<object>> { info };
+            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, sheetid, range);
+            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+            UpdateValuesResponse result2 = update.Execute();
+            await ReplyAsync("Set your spec to **" + data + "**.");
+        }
+        [Command("ilvl"), Summary("Set your current iLevel")]
+        public async Task iLvl(string data)
+        {
+            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No data found..."); return; }
+            range = "F" + GetRowByDiscord(Program.context.User.ToString());
+            Console.WriteLine(range);
+            requestbody = new Data.ValueRange();
+            requestbody.MajorDimension = "ROWS";
+            var info = new List<object>() { data };
+            requestbody.Values = new List<IList<object>> { info };
+            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, sheetid, range);
+            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+            UpdateValuesResponse result2 = update.Execute();
+            await ReplyAsync("Updated your item level to: **" + data + "**.");
+        }
+        [Command("info"), Summary("Get information about a specific player or mention")]
+        public async Task Info(string data)
+        {
+            //Do some parsing to see if data == Character name or an @Mention. Should be able to look up either. Then do an embed of all their information from the spreadsheet, see above.
         }
     }
-    
 }
 
 
