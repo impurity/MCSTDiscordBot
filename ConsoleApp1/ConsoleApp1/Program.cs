@@ -170,6 +170,56 @@ namespace MyBot
             }
             return 0;
         }
+        private static int GetRowByAlt(int altnum, string name)
+        {
+            if (altnum > 3 || altnum == 0) { return 0; }
+            switch(altnum)
+            {
+                case 1:
+                    range = "G2:G";
+                    break;
+                case 2:
+                    range = "I2:I";
+                    break;
+            }
+            SpreadsheetsResource.ValuesResource.GetRequest get = service.Spreadsheets.Values.Get(sheetid, range);
+            ValueRange response = get.Execute();
+            if (response.Values == null) { return 0; }
+            IList<IList<object>> values = response.Values;
+            int rownum = 2;
+            foreach (var row in values)
+            {
+                foreach (var cell in row)
+                {
+                    if ((string)cell == name)
+                    {
+                        return rownum;
+                    }
+                    rownum++;
+                }
+            }
+            return 0;
+        }
+        private static bool CellEmpty(string range)
+        {
+            SpreadsheetsResource.ValuesResource.GetRequest get = service.Spreadsheets.Values.Get(sheetid, range);
+            ValueRange response = get.Execute();
+            if (response.Values == null) { return true; }
+            IList<IList<object>> values = response.Values;
+            int rownum = 2;
+            foreach (var row in values)
+            {
+                foreach (var cell in row)
+                {
+                    if ((string)cell == "")
+                    {
+                        return true;
+                    }
+                    else { return false; }
+                }
+            }
+            return false;
+        }
         // ~say hello -> hello
         [Command("say"), Summary("Echos a message.")]
         public async Task Say([Remainder, Summary("The text to echo")] string echo)
@@ -183,12 +233,13 @@ namespace MyBot
         {
             var builder = new EmbedBuilder();
             builder.WithTitle("Command Information");
-            builder.WithDescription("Outline of commands and their parameters.");
+            builder.WithDescription("Outline of commands and their parameters. Start by adding your character to the sheet using the !add <Player Name> command.");
+            builder.AddField("!add <character>", "Add your main character to the spreadsheet.");
+            builder.AddField("!alt <character> <item level>", "Add up to two alts and their item levels.");
             builder.AddInlineField("!halp", "This menu!");
             builder.AddInlineField("!sheet", "Displays the google sheet url.");
-            builder.AddInlineField("!add <character>", "Add your main character to the spreadsheet.");
-            builder.AddInlineField("!role <Tank/DPS/Healer>", "Sets your raid role");
-            builder.AddInlineField("!class <ingame class>", "Set your in-game class.");
+            builder.AddInlineField("!role <Tank | Healer | RDPS | MDPS | DPS>", "Sets your raid role");
+            builder.AddInlineField("!class <Warrior | Mage | Priest | Hunter | Warlock | Demon Hunter | Death Knight | Paladin | Druid | Rogue | Shaman>", "Set your in-game class.");
             builder.AddInlineField("!spec <ingame spec>", "Set your in-game specalization.");
             builder.AddInlineField("!ilvl <###>", "Update your current item level.");
             builder.AddField("!info <character/discord>", "Displays all information about a character. Can be searched by ingame character name or Discord mention.");
@@ -217,10 +268,60 @@ namespace MyBot
             Data.AppendValuesResponse response = await r.ExecuteAsync();
             await ReplyAsync("Successfully added!");
         }
+        [Command("alt"), Summary("Add an alt to the spreadsheet with its item level.")]
+        public async Task Alt(string name, string ilvl)
+        {
+            range = "G" + GetRowByDiscord(Program.context.User.ToString());
+            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added a main character with the !add *<Player Name>* command"); return; }
+            if (GetRowByAlt(1, name) != 0 || GetRowByAlt(2, name) != 0) { await ReplyAsync("You've already added this alt."); return; }
+            if (ilvl.All(char.IsDigit) == false || ilvl.Length > 3) { await ReplyAsync("Invalid item level."); return; }
+            if (CellEmpty("G" + GetRowByDiscord(Program.context.User.ToString())) == false && CellEmpty("I" + GetRowByDiscord(Program.context.User.ToString())) == false) { await ReplyAsync("You can only have up to two alt's, if you need an alt removed contact an Officer."); return;  }
+            if (GetRowByAlt(1, name) == 0)
+            {
+                if (CellEmpty(range) == true)
+                {
+                    range = "G" + GetRowByDiscord(Program.context.User.ToString());
+                    goto onward;
+                }
+            }
+            if(GetRowByAlt(2, name) == 0)
+            {
+                range = "I" + GetRowByDiscord(Program.context.User.ToString());
+            }
+            onward:
+            IList<IList<object>> data = new List<IList<object>>() { new List<object> { name, ilvl } };
+            requestbody = new Data.ValueRange();
+            requestbody.MajorDimension = "ROWS";
+            requestbody.Values = data;
+            SpreadsheetsResource.ValuesResource.UpdateRequest update = service.Spreadsheets.Values.Update(requestbody, sheetid, range);
+            update.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
+            UpdateValuesResponse result = update.Execute();
+            await ReplyAsync("Successfully added alt!");
+        }
         [Command("role"), Summary("Set raid role.")]
         public async Task Role(string data)
         {
-            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No data found..."); return; }
+            bool valid = false;
+            switch (data)
+            {
+                case "Tank":
+                    valid = true;
+                    break;
+                case "Healer":
+                    valid = true;
+                    break;
+                case "RDPS":
+                    valid = true;
+                    break;
+                case "MDPS":
+                    valid = true;
+                    break;
+                case "DPS":
+                    valid = true;
+                    break;
+            }
+            if (valid == false) { await ReplyAsync("Invalid parameter: **" + data + "**. Please type !halp to see a list of supported parameters."); return; }
+            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
             range = "C" + GetRowByDiscord(Program.context.User.ToString());
             requestbody = new Data.ValueRange();
             requestbody.MajorDimension = "ROWS";
@@ -232,9 +333,50 @@ namespace MyBot
             await ReplyAsync("Set your role to **" + data + "**.");
         }
         [Command("class"), Summary("Set your ingame class")]
-        public async Task Class(string data)
+        public async Task Class([Remainder, Summary("Your ingame class.")] string data)
         {
-            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No data found..."); return; }
+            bool valid = false;
+            switch (data)
+            {
+                case "Warrior":
+                    valid = true;
+                    break;
+                case "Mage":
+                    valid = true;
+                    break;
+                case "Priest":
+                    valid = true;
+                    break;
+                case "Hunter":
+                    valid = true;
+                    break;
+                case "Warlock":
+                    valid = true;
+                    break;
+                case "Monk":
+                    valid = true;
+                    break;
+                case "Demon Hunter":
+                    valid = true;
+                    break;
+                case "Death Knight":
+                    valid = true;
+                    break;
+                case "Paladin":
+                    valid = true;
+                    break;
+                case "Druid":
+                    valid = true;
+                    break;
+                case "Rogue":
+                    valid = true;
+                    break;
+                case "Shaman":
+                    valid = true;
+                    break;
+            }
+            if (valid == false) { await ReplyAsync("Invalid parameter: **" + data + "**. Please type !halp to see a list of supported parameters."); return; }
+            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
             range = "E" + GetRowByDiscord(Program.context.User.ToString());
             requestbody = new Data.ValueRange();
             requestbody.MajorDimension = "ROWS";
@@ -247,9 +389,113 @@ namespace MyBot
 
         }
         [Command("spec"), Summary("Set your main spec")]
-        public async Task Spec(string data)
+        public async Task Spec([Remainder, Summary("Set your main specialization ingame.")] string data)
         {
-            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No data found..."); return; }
+            bool valid = false;
+            switch (data)
+            {
+                case "Arms":
+                    valid = true;
+                    break;
+                case "Fury":
+                    valid = true;
+                    break;
+                case "Prot":
+                    valid = true;
+                    break;
+                case "Protection":
+                    valid = true;
+                    break;
+                case "Arcane":
+                    valid = true;
+                    break;
+                case "Fire":
+                    valid = true;
+                    break;
+                case "Frost":
+                    valid = true;
+                    break;
+                case "Discipline":
+                    valid = true;
+                    break;
+                case "Holy":
+                    valid = true;
+                    break;
+                case "Shadow":
+                    valid = true;
+                    break;
+                case "Beast Mastery":
+                    valid = true;
+                    break;
+                case "Marskman":
+                    valid = true;
+                    break;
+                case "Survival":
+                    valid = true;
+                    break;
+                case "Affliction":
+                    valid = true;
+                    break;
+                case "Demonology":
+                    valid = true;
+                    break;
+                case "Destruction":
+                    valid = true;
+                    break;
+                case "Brewmaster":
+                    valid = true;
+                    break;
+                case "Mistweaver":
+                    valid = true;
+                    break;
+                case "Windwalker":
+                    valid = true;
+                    break;
+                case "Havoc":
+                    valid = true;
+                    break;
+                case "Vengeance":
+                    valid = true;
+                    break;
+                case "Blood":
+                    valid = true;
+                    break;
+                case "Unholy":
+                    valid = true;
+                    break;
+                case "Retribution":
+                    valid = true;
+                    break;
+                case "Balance":
+                    valid = true;
+                    break;
+                case "Feral":
+                    valid = true;
+                    break;
+                case "Guardian":
+                    valid = true;
+                    break;
+                case "Restoration":
+                    valid = true;
+                    break;
+                case "Assassination":
+                    valid = true;
+                    break;
+                case "Outlaw":
+                    valid = true;
+                    break;
+                case "Subtlety":
+                    valid = true;
+                    break;
+                case "Elemental":
+                    valid = true;
+                    break;
+                case "Enhancement":
+                    valid = true;
+                    break;
+            }
+            if (valid == false) { await ReplyAsync("Invalid parameter: **" + data + "**. Please type !halp to see a list of supported parameters."); return; }
+            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
             range = "F" + GetRowByDiscord(Program.context.User.ToString());
             requestbody = new Data.ValueRange();
             requestbody.MajorDimension = "ROWS";
@@ -263,7 +509,10 @@ namespace MyBot
         [Command("ilvl"), Summary("Set your current iLevel")]
         public async Task iLvl(string data)
         {
-            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No data found..."); return; }
+            bool valid = true;
+            if (data.Length > 3 || !data.All(char.IsDigit)) { valid = false; }
+            if (valid == false) { await ReplyAsync("Invalid parameter: **" + data + "**. Please type !halp to see a list of supported parameters."); return; }
+            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
             range = "D" + GetRowByDiscord(Program.context.User.ToString());
             Console.WriteLine(range);
             requestbody = new Data.ValueRange();
@@ -295,14 +544,15 @@ namespace MyBot
                     return;
                 }
                 user = search.First();
+                if (GetRowByDiscord(user.ToString()) == 0) { await ReplyAsync("No user found, be sure they have been added with the !add command before querying"); return; };
                 builder.WithTitle(user.Username.ToString() + "'s Information Page");
                 SpreadsheetsResource.ValuesResource.GetRequest get;
                 ValueRange response;
                 IList<IList<object>> values;
-                string[] types = { "Role", "iLevel", "Class", "Spec", "Attendance" };
-                string[] fields = { "N/A", "N/A", "N/A", "N/A", "N/A" };
+                string[] types = { "Role", "iLevel", "Class", "Spec", "Alt Character", "Alt Character iLevel", "Alt Character", "Alt Character iLevel", "Attendance" };
+                string[] fields = { "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A" };
                 int i = 0;
-                for (char c = 'C'; c <= 'G'; c++)
+                for (char c = 'C'; c <= 'K'; c++)
                 {
                     range = c + GetRowByDiscord(user.ToString()).ToString();
                     get = service.Spreadsheets.Values.Get(sheetid, range);
@@ -312,7 +562,7 @@ namespace MyBot
                     {
                         foreach (var value in values)
                         {
-                            if (value[0] == null) { break; }
+                            if ((string)value[0] == "") { break; }
                             Console.WriteLine(value[0]);
                             fields[i] = (string)value[0];
                         }
@@ -329,14 +579,15 @@ namespace MyBot
             }
             else
             {
+                if (GetRowByName(data) == 0) { await ReplyAsync("No user found, be sure they have been added with the !add command before querying"); return; };
                 builder.WithTitle(data + "'s Information Page");
                 SpreadsheetsResource.ValuesResource.GetRequest get;
                 ValueRange response;
                 IList<IList<object>> values;
-                string[] types = { "Role", "iLevel", "Class", "Spec", "Attendance" };
-                string[] fields = { "", "", "", "", "N/A" };
+                string[] types = { "Role", "iLevel", "Class", "Spec", "Alt Character", "Alt Character iLevel", "Alt Character", "Alt Character iLevel", "Attendance" };
+                string[] fields = { "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A" };
                 int i = 0;
-                for (char c = 'C'; c <= 'G'; c++)
+                for (char c = 'C'; c <= 'K'; c++)
                 {
                     range = c + GetRowByName(data).ToString();
                     get = service.Spreadsheets.Values.Get(sheetid, range);
@@ -346,7 +597,7 @@ namespace MyBot
                     {
                         foreach (var value in values)
                         {
-                            if (value[0] == null) { break; }
+                            if ((string)value[0] == "") { break; }
                             Console.WriteLine(value[0]);
                             fields[i] = (string)value[0];
                         }
