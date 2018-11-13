@@ -281,14 +281,14 @@ namespace MyBot
                 if (CellEmpty(range) == true)
                 {
                     range = "G" + GetRowByDiscord(Program.context.User.ToString());
-                    goto onward;
+                } else
+                {
+                    if (GetRowByAlt(2, name) == 0)
+                    {
+                        range = "I" + GetRowByDiscord(Program.context.User.ToString());
+                    }
                 }
             }
-            if(GetRowByAlt(2, name) == 0)
-            {
-                range = "I" + GetRowByDiscord(Program.context.User.ToString());
-            }
-            onward:
             IList<IList<object>> data = new List<IList<object>>() { new List<object> { name, ilvl } };
             requestbody = new Data.ValueRange();
             requestbody.MajorDimension = "ROWS";
