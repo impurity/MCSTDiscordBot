@@ -261,11 +261,11 @@ namespace MyBot
         [Command("info"), Summary("Get information about a specific player or mention")]
         public async Task Info(string data)
         {
-            if (data == "me")
-            {
-                var t = GetInfoFromColumns(data, Program.context.User.ToString());
-                await ReplyAsync("");
-            }
+           // if (data == "me")
+           // {
+           //     var t = GetInfoFromColumns(data, Program.context.User.ToString());
+           //     await ReplyAsync("");
+           // }
             //Do some parsing to see if data == Character name or an @Mention. Should be able to look up either. Then do an embed of all their information from the spreadsheet, see above.
         }
     }
