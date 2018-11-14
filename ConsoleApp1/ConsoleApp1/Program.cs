@@ -15,7 +15,7 @@ using Google.Apis.Sheets.v4.Data;
 using Data = Google.Apis.Sheets.v4.Data;
 using System.Collections.Generic;
 using System.Linq;
-
+using MCSTDiscord;
 namespace MyBot
 {
     public class Program
@@ -127,99 +127,7 @@ namespace MyBot
         public static string ApplicationName = "DevArea Client";
         public static SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum valueinputoption;
         public static SpreadsheetsResource.ValuesResource.AppendRequest.InsertDataOptionEnum insertdataoption;
-
-        private static int GetRowByDiscord(string discordhandle)
-        {
-            range = "B2:B";
-            SpreadsheetsResource.ValuesResource.GetRequest get = service.Spreadsheets.Values.Get(sheetid, range);
-            ValueRange response = get.Execute();
-            if (response.Values == null) { return 0; }
-            IList<IList<object>> values = response.Values;
-            int rownum = 2;
-            foreach (var row in values)
-            {
-                foreach (var cell in row)
-                {
-                    if ((string)cell == discordhandle)
-                    {
-                        return rownum;
-                    }
-                    rownum++;
-                }
-            }
-            return 0;
-        }
-        private static int GetRowByName(string name)
-        {
-            range = "A2:A";
-            SpreadsheetsResource.ValuesResource.GetRequest get = service.Spreadsheets.Values.Get(sheetid, range);
-            ValueRange response = get.Execute();
-            if (response.Values == null) { return 0; }
-            IList<IList<object>> values = response.Values;
-            int rownum = 2;
-            foreach (var row in values)
-            {
-                foreach (var cell in row)
-                {
-                    if ((string)cell == name)
-                    {
-                        return rownum;
-                    }
-                    rownum++;
-                }
-            }
-            return 0;
-        }
-        private static int GetRowByAlt(int altnum, string name)
-        {
-            if (altnum > 3 || altnum == 0) { return 0; }
-            switch(altnum)
-            {
-                case 1:
-                    range = "G2:G";
-                    break;
-                case 2:
-                    range = "I2:I";
-                    break;
-            }
-            SpreadsheetsResource.ValuesResource.GetRequest get = service.Spreadsheets.Values.Get(sheetid, range);
-            ValueRange response = get.Execute();
-            if (response.Values == null) { return 0; }
-            IList<IList<object>> values = response.Values;
-            int rownum = 2;
-            foreach (var row in values)
-            {
-                foreach (var cell in row)
-                {
-                    if ((string)cell == name)
-                    {
-                        return rownum;
-                    }
-                    rownum++;
-                }
-            }
-            return 0;
-        }
-        private static bool CellEmpty(string range)
-        {
-            SpreadsheetsResource.ValuesResource.GetRequest get = service.Spreadsheets.Values.Get(sheetid, range);
-            ValueRange response = get.Execute();
-            if (response.Values == null) { return true; }
-            IList<IList<object>> values = response.Values;
-            int rownum = 2;
-            foreach (var row in values)
-            {
-                foreach (var cell in row)
-                {
-                    if ((string)cell == "")
-                    {
-                        return true;
-                    }
-                    else { return false; }
-                }
-            }
-            return false;
-        }
+        
         // ~say hello -> hello
         [Command("say"), Summary("Echos a message.")]
         public async Task Say([Remainder, Summary("The text to echo")] string echo)
@@ -254,7 +162,7 @@ namespace MyBot
         [Command("add"), Summary("Add yourself to the spreadsheet.")]
         public async Task Add(string name)
         {
-            if (GetRowByDiscord(Program.context.User.ToString()) != 0) { await ReplyAsync("You have already added yourself."); return; }
+            if (Utils.GetRowByDiscord(Program.context.User.ToString()) != 0) { await ReplyAsync("You have already added yourself."); return; }
             IList<IList<object>> data = new List<IList<object>>() { new List<object> { name, Program.context.User.ToString() } };
             range = "A1";
             requestbody = new Data.ValueRange();
@@ -271,21 +179,21 @@ namespace MyBot
         [Command("alt"), Summary("Add an alt to the spreadsheet with its item level.")]
         public async Task Alt(string name, string ilvl)
         {
-            range = "G" + GetRowByDiscord(Program.context.User.ToString());
-            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added a main character with the !add *<Player Name>* command"); return; }
-            if (GetRowByAlt(1, name) != 0 || GetRowByAlt(2, name) != 0) { await ReplyAsync("You've already added this alt."); return; }
+            range = "G" + Utils.GetRowByDiscord(Program.context.User.ToString());
+            if (Utils.GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added a main character with the !add *<Player Name>* command"); return; }
+            if (Utils.GetRowByAlt(1, name) != 0 || Utils.GetRowByAlt(2, name) != 0) { await ReplyAsync("You've already added this alt."); return; }
             if (ilvl.All(char.IsDigit) == false || ilvl.Length > 3) { await ReplyAsync("Invalid item level."); return; }
-            if (CellEmpty("G" + GetRowByDiscord(Program.context.User.ToString())) == false && CellEmpty("I" + GetRowByDiscord(Program.context.User.ToString())) == false) { await ReplyAsync("You can only have up to two alt's, if you need an alt removed contact an Officer."); return;  }
-            if (GetRowByAlt(1, name) == 0)
+            if (Utils.CellEmpty("G" + Utils.GetRowByDiscord(Program.context.User.ToString())) == false && Utils.CellEmpty("I" + Utils.GetRowByDiscord(Program.context.User.ToString())) == false) { await ReplyAsync("You can only have up to two alt's, if you need an alt removed contact an Officer."); return;  }
+            if (Utils.GetRowByAlt(1, name) == 0)
             {
-                if (CellEmpty(range) == true)
+                if (Utils.CellEmpty(range) == true)
                 {
-                    range = "G" + GetRowByDiscord(Program.context.User.ToString());
+                    range = "G" + Utils.GetRowByDiscord(Program.context.User.ToString());
                 } else
                 {
-                    if (GetRowByAlt(2, name) == 0)
+                    if (Utils.GetRowByAlt(2, name) == 0)
                     {
-                        range = "I" + GetRowByDiscord(Program.context.User.ToString());
+                        range = "I" + Utils.GetRowByDiscord(Program.context.User.ToString());
                     }
                 }
             }
@@ -321,8 +229,8 @@ namespace MyBot
                     break;
             }
             if (valid == false) { await ReplyAsync("Invalid parameter: **" + data + "**. Please type !halp to see a list of supported parameters."); return; }
-            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
-            range = "C" + GetRowByDiscord(Program.context.User.ToString());
+            if (Utils.GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
+            range = "C" + Utils.GetRowByDiscord(Program.context.User.ToString());
             requestbody = new Data.ValueRange();
             requestbody.MajorDimension = "ROWS";
             var info = new List<object>() { data };
@@ -376,8 +284,8 @@ namespace MyBot
                     break;
             }
             if (valid == false) { await ReplyAsync("Invalid parameter: **" + data + "**. Please type !halp to see a list of supported parameters."); return; }
-            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
-            range = "E" + GetRowByDiscord(Program.context.User.ToString());
+            if (Utils.GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
+            range = "E" + Utils.GetRowByDiscord(Program.context.User.ToString());
             requestbody = new Data.ValueRange();
             requestbody.MajorDimension = "ROWS";
             var info = new List<object>() { data };
@@ -495,8 +403,8 @@ namespace MyBot
                     break;
             }
             if (valid == false) { await ReplyAsync("Invalid parameter: **" + data + "**. Please type !halp to see a list of supported parameters."); return; }
-            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
-            range = "F" + GetRowByDiscord(Program.context.User.ToString());
+            if (Utils.GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
+            range = "F" + Utils.GetRowByDiscord(Program.context.User.ToString());
             requestbody = new Data.ValueRange();
             requestbody.MajorDimension = "ROWS";
             var info = new List<object>() { data };
@@ -512,8 +420,8 @@ namespace MyBot
             bool valid = true;
             if (data.Length > 3 || !data.All(char.IsDigit)) { valid = false; }
             if (valid == false) { await ReplyAsync("Invalid parameter: **" + data + "**. Please type !halp to see a list of supported parameters."); return; }
-            if (GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
-            range = "D" + GetRowByDiscord(Program.context.User.ToString());
+            if (Utils.GetRowByDiscord(Program.context.User.ToString()) == 0) { await ReplyAsync("No user found, be sure you've added yourself with the !add *<Player Name>* command"); return; }
+            range = "D" + Utils.GetRowByDiscord(Program.context.User.ToString());
             Console.WriteLine(range);
             requestbody = new Data.ValueRange();
             requestbody.MajorDimension = "ROWS";
@@ -544,7 +452,7 @@ namespace MyBot
                     return;
                 }
                 user = search.First();
-                if (GetRowByDiscord(user.ToString()) == 0) { await ReplyAsync("No user found, be sure they have been added with the !add command before querying"); return; };
+                if (Utils.GetRowByDiscord(user.ToString()) == 0) { await ReplyAsync("No user found, be sure they have been added with the !add command before querying"); return; };
                 builder.WithTitle(user.Username.ToString() + "'s Information Page");
                 SpreadsheetsResource.ValuesResource.GetRequest get;
                 ValueRange response;
@@ -554,7 +462,7 @@ namespace MyBot
                 int i = 0;
                 for (char c = 'C'; c <= 'K'; c++)
                 {
-                    range = c + GetRowByDiscord(user.ToString()).ToString();
+                    range = c + Utils.GetRowByDiscord(user.ToString()).ToString();
                     get = service.Spreadsheets.Values.Get(sheetid, range);
                     response = get.Execute();
                     values = response.Values;
@@ -579,7 +487,7 @@ namespace MyBot
             }
             else
             {
-                if (GetRowByName(data) == 0) { await ReplyAsync("No user found, be sure they have been added with the !add command before querying"); return; };
+                if (Utils.GetRowByName(data) == 0) { await ReplyAsync("No user found, be sure they have been added with the !add command before querying"); return; };
                 builder.WithTitle(data + "'s Information Page");
                 SpreadsheetsResource.ValuesResource.GetRequest get;
                 ValueRange response;
@@ -589,7 +497,7 @@ namespace MyBot
                 int i = 0;
                 for (char c = 'C'; c <= 'K'; c++)
                 {
-                    range = c + GetRowByName(data).ToString();
+                    range = c + Utils.GetRowByName(data).ToString();
                     get = service.Spreadsheets.Values.Get(sheetid, range);
                     response = get.Execute();
                     values = response.Values;
