@@ -4,17 +4,12 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <StartupObject>MyBot.Program</StartupObject>
+    <AssemblyName>MCSTDiscordBot</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.2" />
     <PackageReference Include="Google.Apis.Sheets.v4" Version="1.36.1.1399" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="credentials.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

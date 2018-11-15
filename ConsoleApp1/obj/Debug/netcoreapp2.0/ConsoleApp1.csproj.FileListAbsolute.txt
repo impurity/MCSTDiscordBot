@@ -10,3 +10,7 @@ C:\Users\Impurity\Desktop\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\Consol
 C:\Users\Impurity\Desktop\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.AssemblyInfo.cs
 C:\Users\Impurity\Desktop\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.dll
 C:\Users\Impurity\Desktop\ConsoleApp1\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.pdb
+D:\InDev\CBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.csproj.CoreCompileInputs.cache
+D:\InDev\CBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.AssemblyInfoInputs.cache
+D:\InDev\CBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.AssemblyInfo.cs
+D:\InDev\CBot\MCSTDiscordBot\ConsoleApp1\obj\Debug\netcoreapp2.0\ConsoleApp1.csprojAssemblyReference.cache
