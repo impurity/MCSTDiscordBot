@@ -27,9 +27,21 @@ namespace MyBot
         public static CommandContext context;
         private IServiceProvider services;
 
+     
+        
+      
+        
         //SpreadSheet Stuff
-
-
+        static void CheckAlive()
+        {
+            while (true)
+            {
+                Thread.Sleep(300000); //5 Minutes
+                System.Diagnostics.Debug.WriteLine("Refreshed\n");
+                AuthorizeGoogle();
+            }
+        }
+      
         // Program Entry Point
         public static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
 
@@ -62,6 +74,10 @@ namespace MyBot
         public async Task MainAsync()
         {
             // Discord Auth Stuff
+            ThreadStart AliveThread = new ThreadStart(CheckAlive);
+
+            Thread t = new Thread(AliveThread);
+            t.Start();
             string token = "NTEwMTk2NjcxMTAwMjIzNTA1.DsY1iw.SpU-9T6FkXNHdB96ZaUVBKSoos8";
             _client = new DiscordSocketClient();
             services = new ServiceCollection().BuildServiceProvider();
