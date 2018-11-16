@@ -44,16 +44,17 @@ namespace MCSTDiscord
 
         public static int GetRowByDiscord(string discordhandle)
         {
-            string range = "B2:B";
+            string range = "C5:C";
             SpreadsheetsResource.ValuesResource.GetRequest get = Commands.service.Spreadsheets.Values.Get(Commands.sheetid, range);
             ValueRange response = get.Execute();
             if (response.Values == null) { return 0; }
             IList<IList<object>> values = response.Values;
-            int rownum = 2;
+            int rownum = 5;
             foreach (var row in values)
             {
                 foreach (var cell in row)
                 {
+                    Console.WriteLine(cell);
                     if ((string)cell == discordhandle)
                     {
                         return rownum;
@@ -65,12 +66,12 @@ namespace MCSTDiscord
         }
         public static int GetRowByName(string name)
         {
-            string range = "A2:A";
+            string range = "B5:A";
             SpreadsheetsResource.ValuesResource.GetRequest get = Commands.service.Spreadsheets.Values.Get(Commands.sheetid, range);
             ValueRange response = get.Execute();
             if (response.Values == null) { return 0; }
             IList<IList<object>> values = response.Values;
-            int rownum = 2;
+            int rownum = 5;
             foreach (var row in values)
             {
                 foreach (var cell in row)
@@ -92,17 +93,17 @@ namespace MCSTDiscord
             switch (altnum)
             {
                 case 1:
-                    range = "G2:G";
+                    range = "H2:G";
                     break;
                 case 2:
-                    range = "I2:I";
+                    range = "J2:I";
                     break;
             }
             SpreadsheetsResource.ValuesResource.GetRequest get = Commands.service.Spreadsheets.Values.Get(Commands.sheetid, range);
             ValueRange response = get.Execute();
             if (response.Values == null) { return 0; }
             IList<IList<object>> values = response.Values;
-            int rownum = 2;
+            int rownum = 5;
             foreach (var row in values)
             {
                 foreach (var cell in row)
@@ -122,7 +123,6 @@ namespace MCSTDiscord
             ValueRange response = get.Execute();
             if (response.Values == null) { return true; }
             IList<IList<object>> values = response.Values;
-            int rownum = 2;
             foreach (var row in values)
             {
                 foreach (var cell in row)
@@ -135,6 +135,14 @@ namespace MCSTDiscord
                 }
             }
             return false;
+        }
+
+        public static string UpperCaseIt(string word)
+        {
+            if (word == string.Empty) { return string.Empty; }
+            char[] letters = word.ToCharArray();
+            letters[0] = char.ToUpper(letters[0]);
+            return new string(letters);
         }
     }
 }
